@@ -1,44 +1,16 @@
-const SectionTiles = () => {
-    return (
-        <section>
-            <h3>test</h3>
-            <div className="scroller">
-                <SectionTile></SectionTile>
-                <SectionTile></SectionTile>
-                <SectionTile></SectionTile>
-                <SectionTile></SectionTile>
-                <SectionTile></SectionTile>
-            </div>
-        </section>
-    );
-};
+import { useEffect, useState } from "react";
+import { API_KEY } from "./API_KEY";
+import {
+    POPULAR_RECIPES,
+    VEGAN_RECIPES,
+    VEGETARIAN_RECIPES,
+} from "./DEMO_DATA";
 
-const SectionSingular = () => {
-    return (
-        <section>
-            <h3>test</h3>
-            <SectionLargeTile></SectionLargeTile>
-        </section>
-    );
-};
-
-const SectionLargeTile = () => {
-    return (
-        <article>
-            <div className="info">
-                <div className="ratings">
-                    <div className="bar"></div>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                </div>
-                <p>45 mins</p>
-            </div>
-        </article>
-    );
-};
+interface Recipe {
+    readyInMinutes: number;
+    image: string;
+    sourceUrl: string;
+}
 
 const RatingCircle = () => {
     return (
@@ -61,39 +33,157 @@ const RatingCircle = () => {
     );
 };
 
-const SectionTile = () => {
+const SectionTiles = (props: { title: string; recipes: Recipe[] }) => {
     return (
-        <article>
-            <div className="info">
-                <div className="ratings">
-                    <div className="bar"></div>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                    <RatingCircle></RatingCircle>
-                </div>
-                <p>45 mins</p>
+        <section>
+            <h3>{props.title}</h3>
+            <div className="scroller">
+                {props.recipes.map((recipe: Recipe, index: number) => (
+                    <SectionTile
+                        key={index}
+                        sourceUrl={recipe.sourceUrl}
+                        readyIn={recipe.readyInMinutes}
+                        imageUrl={recipe.image}
+                    ></SectionTile>
+                ))}
             </div>
-        </article>
+        </section>
+    );
+};
+
+const SectionSingular = (props: { title: string; recipe: Recipe }) => {
+    return (
+        <section>
+            <h3>{props.title}</h3>
+            <SectionTile
+                sourceUrl={props.recipe.sourceUrl}
+                readyIn={props.recipe.readyInMinutes}
+                imageUrl={props.recipe.image}
+            ></SectionTile>
+        </section>
+    );
+};
+
+const SectionTile = (props: {
+    readyIn: number;
+    imageUrl: string;
+    sourceUrl: string;
+}) => {
+    return (
+        <a target="_blank" href={props.sourceUrl}>
+            <article
+                style={{
+                    backgroundImage: `radial-gradient(transparent, rgba(0, 0, 0, 0.192)), url("${props.imageUrl}")`,
+                }}
+            >
+                <div className="info">
+                    <div className="ratings">
+                        <div className="bar"></div>
+                        <RatingCircle></RatingCircle>
+                        <RatingCircle></RatingCircle>
+                        <RatingCircle></RatingCircle>
+                        <RatingCircle></RatingCircle>
+                        <RatingCircle></RatingCircle>
+                    </div>
+                    <p>{props.readyIn} mins</p>
+                </div>
+            </article>
+        </a>
     );
 };
 
 const PopularSection = () => {
+    const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
+
+    const getPopularRecipes = async () => {
+        setPopularRecipes(POPULAR_RECIPES as Recipe[]);
+        return;
+
+        const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11`;
+        const response = await fetch(url);
+        const json = await response.json();
+
+        console.log(json.recipes);
+
+        setPopularRecipes(json.recipes);
+    };
+
+    useEffect(() => {
+        getPopularRecipes();
+    }, []);
+
     return (
         <>
-            <SectionSingular></SectionSingular>
-            <SectionTiles></SectionTiles>
+            <SectionSingular
+                title="Recipe of the Day"
+                recipe={
+                    popularRecipes.length > 0
+                        ? popularRecipes[0]
+                        : {
+                              readyInMinutes: 0,
+                              image: "",
+                              sourceUrl: "",
+                          }
+                }
+            ></SectionSingular>
+            <SectionTiles
+                title="Popular Today"
+                recipes={popularRecipes.slice(1)}
+            ></SectionTiles>
         </>
     );
 };
 
 const VegetarianSection = () => {
-    return <div></div>;
+    const [vegetarianRecipes, setVegetarianRecipes] = useState<Recipe[]>([]);
+
+    const getVegetarianRecipes = async () => {
+        setVegetarianRecipes(VEGETARIAN_RECIPES);
+        return;
+
+        const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11&tags=vegetarian`;
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log(json.recipes);
+        setVegetarianRecipes(json.recipes);
+    };
+
+    useEffect(() => {
+        getVegetarianRecipes();
+    }, []);
+
+    return (
+        <SectionTiles
+            title="Vegetarian Recipes"
+            recipes={vegetarianRecipes}
+        ></SectionTiles>
+    );
 };
 
 const VeganSection = () => {
-    return <div></div>;
+    const [veganRecipes, setVeganRecipes] = useState<Recipe[]>([]);
+
+    const getVeganRecipes = async () => {
+        setVeganRecipes(VEGAN_RECIPES);
+        return;
+
+        const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11&tags=vegan`;
+        const response = await fetch(url);
+        const json = await response.json();
+
+        setVeganRecipes(json.recipes);
+    };
+
+    useEffect(() => {
+        getVeganRecipes();
+    }, []);
+
+    return (
+        <SectionTiles
+            title="Vegan Recipes"
+            recipes={veganRecipes}
+        ></SectionTiles>
+    );
 };
 
 export { PopularSection, VegetarianSection, VeganSection };

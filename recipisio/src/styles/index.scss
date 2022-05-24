@@ -16,7 +16,10 @@ code {
     display: flex;
     align-items: center;
     flex-direction: column;
+    position: relative;
 }
 
 @import "header.scss";
+@import "searchBar.scss";
 @import "sections.scss";
+@import "searchOverlay.scss";

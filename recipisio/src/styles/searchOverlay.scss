@@ -1,0 +1,124 @@
+.searchOverlay {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 3;
+
+    transform: scale(0) translateY(165px);
+    transition: translate 0.2s linear;
+
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &.open {
+        animation: show 0s 0.2s normal forwards ease-in-out,
+            moveUp 0.2s normal forwards ease-in-out;
+        animation-iteration-count: 1;
+
+        .searchBar {
+            .closeFilterButton {
+                .filterIcon {
+                    animation: fadeOut 0.4s normal forwards ease-in-out;
+                    animation-iteration-count: 1;
+                }
+                .closeIcon {
+                    animation: fadeIn 0.4s normal forwards ease-in-out;
+                    animation-iteration-count: 1;
+                }
+            }
+        }
+    }
+
+    &.close {
+        animation: moveDown 0.2s normal forwards ease-in-out,
+            hide 0s 0.2s normal forwards ease-in-out;
+        animation-iteration-count: 1;
+
+        .searchBar {
+            .closeFilterButton {
+                .filterIcon {
+                    animation: fadeIn 0.4s normal forwards ease-in-out;
+                    animation-iteration-count: 1;
+                }
+                .closeIcon {
+                    animation: fadeOut 0.4s normal forwards ease-in-out;
+                    animation-iteration-count: 1;
+                }
+            }
+        }
+    }
+
+    .searchBar {
+        input {
+            &:active,
+            &:focus {
+                & + .searchIcon {
+                    @extend .hidden;
+                }
+
+                border: none;
+                outline: none;
+            }
+        }
+    }
+}
+
+@keyframes moveUp {
+    from {
+        transform: translateY(165px);
+    }
+    to {
+        transform: translateY(15px);
+    }
+}
+
+@keyframes moveDown {
+    from {
+        transform: translateY(15px);
+    }
+    to {
+        transform: translateY(165px);
+    }
+}
+
+@keyframes show {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes hide {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
