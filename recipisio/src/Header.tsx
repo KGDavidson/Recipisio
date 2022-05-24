@@ -24,7 +24,7 @@ const Pickle = {
 };
 
 const Header = (props: {
-    openSearchOverlay: () => void;
+    openSearchOverlay: (autofocusInput: boolean) => void;
     searchOverlayOpen?: boolean;
 }) => {
     return (
@@ -44,18 +44,21 @@ const Header = (props: {
 };
 
 const SearchBar = (props: {
-    openSearchOverlay: () => void;
+    openSearchOverlay: (autofocusInput: boolean) => void;
     searchOverlayOpen?: boolean;
 }) => {
-    const [showSearchBar, setShowSearchBar] = useState(true);
-
-    const openSearch = () => {
-        setShowSearchBar(false);
-        props.openSearchOverlay();
+    const openSearch = (
+        e: { stopPropagation: () => void },
+        autofocusInput: boolean
+    ) => {
+        console.log(autofocusInput);
+        e.stopPropagation();
+        props.openSearchOverlay(autofocusInput);
     };
+
     return (
         <div
-            onClick={openSearch}
+            onClick={(e) => openSearch(e, true)}
             className={
                 props.searchOverlayOpen === undefined
                     ? "searchBar"
@@ -65,10 +68,13 @@ const SearchBar = (props: {
             }
         >
             <input disabled></input>
-            <button className="searchIcon">
+            <button onClick={(e) => openSearch(e, true)} className="searchIcon">
                 <img src={search} alt="searchIcon"></img>
             </button>
-            <button className="closeFilterButton">
+            <button
+                onClick={(e) => openSearch(e, false)}
+                className="closeFilterButton"
+            >
                 <img src={filter} className="filterIcon" alt="filterIcon"></img>
             </button>
         </div>

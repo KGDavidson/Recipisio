@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 const SearchOverlay = (props: {
     searchOverlayOpen?: boolean;
     closeSearchOverlay: () => void;
+    autofocusInput: boolean;
 }) => {
     return (
         <div
@@ -18,15 +19,20 @@ const SearchOverlay = (props: {
             }
         >
             <SearchBar
+                autofocusInput={props.autofocusInput}
                 closeSearchOverlay={props.closeSearchOverlay}
             ></SearchBar>
         </div>
     );
 };
 
-const SearchBar = (props: { closeSearchOverlay: () => void }) => {
+const SearchBar = (props: {
+    closeSearchOverlay: () => void;
+    autofocusInput: boolean;
+}) => {
     const [searchText, setSearchText] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
+
     const setInputFocus = () => {
         if (inputRef.current !== null) {
             inputRef.current.focus();
@@ -40,7 +46,7 @@ const SearchBar = (props: { closeSearchOverlay: () => void }) => {
     };
 
     useEffect(() => {
-        setInputFocus();
+        if (props.autofocusInput) setInputFocus();
     });
 
     return (

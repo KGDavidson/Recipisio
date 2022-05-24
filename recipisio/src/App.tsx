@@ -8,8 +8,10 @@ const App = () => {
     const [searchOverlayOpen, setSearchOverlayOpen] = useState<
         boolean | undefined
     >(undefined);
+    const [autofocusInput, setAutofocusInput] = useState(true);
 
-    const openSearchOverlay = () => {
+    const openSearchOverlay = (autofocusInput: boolean) => {
+        setAutofocusInput(autofocusInput);
         setSearchOverlayOpen(true);
     };
 
@@ -27,6 +29,7 @@ const App = () => {
             <VegetarianSection></VegetarianSection>
             <VeganSection></VeganSection>
             <SearchOverlay
+                autofocusInput={autofocusInput}
                 searchOverlayOpen={searchOverlayOpen}
                 closeSearchOverlay={closeSearchOverlay}
             ></SearchOverlay>
