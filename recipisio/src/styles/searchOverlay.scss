@@ -55,15 +55,28 @@
     }
 
     .searchBar {
-        input {
-            &:active,
-            &:focus {
-                & + .searchIcon {
-                    @extend .hidden;
-                }
+        .autofillInput {
+            flex-grow: 0;
+            flex-shrink: 1;
+            height: 100%;
+            width: calc(100% - 50px - 47px);
 
-                border: none;
-                outline: none;
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            align-items: center;
+            padding: 0 25px;
+            overflow: hidden;
+
+            .input {
+                color: black;
+                font-weight: 500;
+                &:focus-visible {
+                    outline: none;
+                }
+            }
+            .autofill {
+                color: grey;
             }
         }
     }

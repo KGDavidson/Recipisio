@@ -2,6 +2,7 @@ import search from "./imgs/search.png";
 import filter from "./imgs/filter.png";
 import close from "./imgs/close.png";
 import { useEffect, useRef, useState } from "react";
+import { API_KEY } from "./API_KEY";
 
 const SearchOverlay = (props: {
     searchOverlayOpen?: boolean;
@@ -19,6 +20,7 @@ const SearchOverlay = (props: {
             }
         >
             <SearchBar
+                searchOverlayOpen={props.searchOverlayOpen}
                 autofocusInput={props.autofocusInput}
                 closeSearchOverlay={props.closeSearchOverlay}
             ></SearchBar>
@@ -27,35 +29,128 @@ const SearchOverlay = (props: {
 };
 
 const SearchBar = (props: {
+    searchOverlayOpen?: boolean;
     closeSearchOverlay: () => void;
     autofocusInput: boolean;
 }) => {
     const [searchText, setSearchText] = useState("");
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [autofillText, setAutofillText] = useState("");
+    const [focussed, setFocussed] = useState(false);
+    const [autofillVisible, setAutoFillVisible] = useState(false);
+
+    const inputRef = useRef<HTMLDivElement>(null);
+
+    var autocompleted: boolean = false;
+
+    const setInputFocusAndClear = () => {
+        setInputFocus();
+        clearInput();
+        setFocussed(true);
+    };
+
+    const clearInput = () => {
+        if (inputRef.current !== null) {
+            inputRef.current.textContent = "";
+        }
+    };
 
     const setInputFocus = () => {
         if (inputRef.current !== null) {
             inputRef.current.focus();
-            inputRef.current.value = "";
+            moveCursorToEnd(inputRef);
         }
     };
 
     const closeSearchOverlay = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+
+        setFocussed(false);
         props.closeSearchOverlay();
     };
 
     useEffect(() => {
-        if (props.autofocusInput) setInputFocus();
+        if (!props.autofocusInput) clearInput();
+        if (!focussed && props.autofocusInput && props.searchOverlayOpen)
+            setInputFocusAndClear();
     });
 
+    const setAutofill = async (text: string) => {
+        setAutofillText("ple");
+        setAutoFillVisible(true);
+
+        /*const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${API_KEY}&query=${text}&number=1&metaInformation=false`;
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log(json);
+
+        if (json.length > 0) {
+            setAutofillText(json[0].name.substring(text.length));
+            setAutoFillVisible(true);
+        }*/
+    };
+
+    useEffect(() => {
+        setAutoFillVisible(false);
+        moveCursorToEnd(inputRef);
+        const delayDebounceFn = setTimeout(() => {
+            if (searchText.length >= 3 && !autocompleted) {
+                setAutofill(searchText);
+                console.log(searchText);
+            }
+            autocompleted = false;
+        }, 700);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchText]);
+
+    const moveCursorToEnd = (e: any) => {
+        const el = e.currentTarget || e.current;
+        const range = document.createRange();
+        const sel = window.getSelection();
+
+        try {
+            range.setStart(el.childNodes[0], searchText.length);
+            range.collapse(true);
+
+            if (sel !== null) {
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        } catch (e) {}
+    };
+
     return (
-        <form className="searchBar">
-            <input
-                ref={inputRef}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-            ></input>
+        <form onClick={setInputFocus} className="searchBar">
+            <div className="autofillInput">
+                <div
+                    className="input"
+                    ref={inputRef}
+                    onInput={(e) =>
+                        setSearchText(e.currentTarget.textContent || "")
+                    }
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            console.log("search");
+                        }
+                        if (e.key === "Tab") {
+                            e.preventDefault();
+                            setSearchText(searchText + autofillText);
+                            e.currentTarget.textContent =
+                                searchText + autofillText;
+                            setAutofill("");
+                        }
+                    }}
+                    contentEditable={true}
+                    suppressContentEditableWarning={true}
+                    spellCheck={false}
+                ></div>
+                {autofillVisible ? (
+                    <div className="autofill">{autofillText}</div>
+                ) : (
+                    <></>
+                )}
+            </div>
             <button
                 className={
                     searchText.length > 0 ? "searchIcon hidden" : "searchIcon"

@@ -51,7 +51,6 @@ const SearchBar = (props: {
         e: { stopPropagation: () => void },
         autofocusInput: boolean
     ) => {
-        console.log(autofocusInput);
         e.stopPropagation();
         props.openSearchOverlay(autofocusInput);
     };
@@ -67,7 +66,7 @@ const SearchBar = (props: {
                     : "searchBar"
             }
         >
-            <input disabled></input>
+            <div></div>
             <button onClick={(e) => openSearch(e, true)} className="searchIcon">
                 <img src={search} alt="searchIcon"></img>
             </button>

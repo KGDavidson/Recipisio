@@ -18,6 +18,12 @@ code {
     flex-direction: column;
     position: relative;
 }
+#hide {
+    position: absolute;
+    opacity: 0;
+    z-index: -100;
+    white-space: pre;
+}
 
 @import "header.scss";
 @import "searchBar.scss";
