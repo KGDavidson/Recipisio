@@ -2,7 +2,7 @@
 
 A mobile-responsive search-by-ingredient recipe application powered by the Spoonacular API
 
-![UI](https://i.postimg.cc/NFpR8MF2/GIF-07-06-2022-05-26-11.gif)
+![UI](https://i.postimg.cc/Pf9XJH2S/ezgif-com-gif-maker-7.gif)
 
 ---
 
