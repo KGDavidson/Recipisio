@@ -7,7 +7,7 @@ section {
     }
 
     article {
-        margin: 0 20px;
+        margin: 10px 20px;
         flex-grow: 1;
         position: relative;
 
@@ -60,6 +60,12 @@ section {
                     z-index: 2;
                 }
             }
+            h6 {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                max-width: 80%;
+                overflow: hidden;
+            }
 
             p {
                 color: grey;
@@ -89,7 +95,19 @@ section {
             width: 50vw;
             height: 75vw;
             background-size: 240% auto;
-            .info {
+        }
+    }
+}
+
+@media only screen and (min-width: 769px) {
+    section {
+        article {
+            height: 40vh;
+        }
+        .scroller {
+            article {
+                height: 35vh;
+                width: 15vw;
             }
         }
     }

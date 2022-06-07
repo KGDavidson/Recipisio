@@ -1,3 +1,57 @@
+@keyframes moveUp {
+    from {
+        transform: translateY(165px);
+    }
+    to {
+        transform: translateY(15px);
+    }
+}
+
+@keyframes moveDown {
+    from {
+        transform: translateY(15px);
+    }
+    to {
+        transform: translateY(165px);
+    }
+}
+
+@keyframes show {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes hide {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
 .searchOverlay {
     position: absolute;
 
@@ -55,6 +109,7 @@
     }
 
     .searchBar {
+        flex-shrink: 0;
         .autofillInput {
             flex-grow: 0;
             flex-shrink: 1;
@@ -71,67 +126,105 @@
             .input {
                 color: black;
                 font-weight: 500;
-                &:focus-visible {
+
+                &:focus,
+                &:active {
                     outline: none;
+                    & + .searchIcon {
+                        opacity: 0;
+                    }
                 }
             }
+
             .autofill {
                 color: grey;
             }
         }
     }
-}
 
-@keyframes moveUp {
-    from {
-        transform: translateY(165px);
-    }
-    to {
-        transform: translateY(15px);
-    }
-}
+    .searchButton {
+        flex-shrink: 0;
+        margin-top: 10px;
+        width: 85%;
+        border: none;
+        height: 30px;
+        border-radius: 20px;
+        background-color: #f9a069;
+        color: white;
+        text-transform: capitalize;
+        font-weight: 700;
+        box-shadow: 0 1px 9px rgb(170 170 170 / 49%);
 
-@keyframes moveDown {
-    from {
-        transform: translateY(15px);
+        &:active {
+            background-color: #eba479;
+        }
     }
-    to {
-        transform: translateY(165px);
-    }
-}
 
-@keyframes show {
-    from {
-        transform: scale(1);
-    }
-    to {
-        transform: scale(1);
-    }
-}
+    .searchTags {
+        flex-shrink: 0;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        width: 90%;
+        height: auto;
+        max-height: 40px;
 
-@keyframes hide {
-    from {
-        transform: scale(0);
-    }
-    to {
-        transform: scale(0);
-    }
-}
+        overflow-y: hidden;
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
+        transition: max-height 0.3s linear;
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
+        &.expanded {
+            max-height: 400px;
+        }
+
+        p {
+            margin: 5px 7px;
+            padding: 5px 15px;
+            padding-right: 12px;
+            border-radius: 20px;
+            text-transform: capitalize;
+            font-size: 14px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 7px;
+
+            color: black;
+            font-weight: 500;
+            background-color: #d6eae3;
+        }
     }
-    to {
-        opacity: 0;
+
+    .searchTagsButton {
+        height: 5px;
+        border-radius: 10px;
+        margin-top: 5px;
+        width: 90%;
+        background-color: rgb(211, 211, 211);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        color: white;
+        font-size: 70%;
+
+        transition: all 0.2s linear;
+
+        &:after {
+            content: "\25BC";
+        }
+
+        &.expanded {
+            height: 7px;
+            background-color: grey;
+            &:after {
+                content: "\25B2";
+            }
+        }
     }
 }

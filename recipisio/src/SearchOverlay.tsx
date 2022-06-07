@@ -1,14 +1,59 @@
+import { useEffect, useRef, useState } from "react";
 import search from "./imgs/search.png";
 import filter from "./imgs/filter.png";
 import close from "./imgs/close.png";
-import { useEffect, useRef, useState } from "react";
 import { API_KEY } from "./API_KEY";
+import { SEARCH_RECIPES } from "./DEMO_DATA";
+
+interface SearchRecipe {
+    title: string;
+    image: string;
+    usedIngredients: {}[];
+    unusedIngredients: {}[];
+}
 
 const SearchOverlay = (props: {
     searchOverlayOpen?: boolean;
     closeSearchOverlay: () => void;
     autofocusInput: boolean;
 }) => {
+    const [items, setItems] = useState([
+        "eggs",
+        "pasta",
+        "tomatoes",
+        "cheese",
+        "cereal",
+        "bread",
+        "sausages",
+        "beans",
+        "beans",
+    ]);
+
+    const [searchRecipes, setSearchRecipes] = useState<SearchRecipe[]>([]);
+
+    const removeItem = (index: number) => {
+        const itemToRemove = items[index];
+        setItems(items.filter((item: string) => item !== itemToRemove));
+    };
+
+    const addItem = (item: string) => {
+        setItems([...items, item]);
+    };
+
+    const search = async () => {
+        //setSearchRecipes(SEARCH_RECIPES);
+
+        //return;
+        const url = `https://api.spoonacular.com/recipes/findByIngredients?apiKey=${API_KEY}&ingredients=${items.join(
+            ","
+        )}`;
+        const response = await fetch(url);
+        const json = await response.json();
+
+        console.log(json);
+        setSearchRecipes(json);
+    };
+
     return (
         <div
             className={
@@ -23,8 +68,48 @@ const SearchOverlay = (props: {
                 searchOverlayOpen={props.searchOverlayOpen}
                 autofocusInput={props.autofocusInput}
                 closeSearchOverlay={props.closeSearchOverlay}
+                addItem={addItem}
             ></SearchBar>
+            <SearchButton search={search}></SearchButton>
+            <SearchTags items={items} removeItem={removeItem}></SearchTags>
+            <section>
+                {searchRecipes.map((recipe: SearchRecipe, index: number) => (
+                    <SectionTile
+                        key={index}
+                        imageUrl={recipe.image}
+                        title={recipe.title}
+                        usedIngredients={recipe.usedIngredients}
+                        unusedIngredients={recipe.unusedIngredients}
+                    ></SectionTile>
+                ))}
+            </section>
         </div>
+    );
+};
+
+const SectionTile = (props: {
+    imageUrl: string;
+    title: string;
+    unusedIngredients: {}[];
+    usedIngredients: {}[];
+}) => {
+    return (
+        <a target="_blank" rel="noreferrer">
+            <article
+                style={{
+                    backgroundImage: `radial-gradient(transparent, rgba(0, 0, 0, 0.192)), url("${props.imageUrl}")`,
+                }}
+            >
+                <div className="info">
+                    <h6>{props.title}</h6>
+                    <p>
+                        {props.usedIngredients.length}/
+                        {props.usedIngredients.length +
+                            props.unusedIngredients.length}
+                    </p>
+                </div>
+            </article>
+        </a>
     );
 };
 
@@ -32,6 +117,7 @@ const SearchBar = (props: {
     searchOverlayOpen?: boolean;
     closeSearchOverlay: () => void;
     autofocusInput: boolean;
+    addItem: (item: string) => void;
 }) => {
     const [searchText, setSearchText] = useState("");
     const [autofillText, setAutofillText] = useState("");
@@ -75,10 +161,11 @@ const SearchBar = (props: {
     });
 
     const setAutofill = async (text: string) => {
-        setAutofillText("ple");
-        setAutoFillVisible(true);
+        //setAutofillText("ple");
+        //setAutoFillVisible(true);
+        //return;
 
-        /*const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${API_KEY}&query=${text}&number=1&metaInformation=false`;
+        const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${API_KEY}&query=${text}&number=1&metaInformation=false`;
         const response = await fetch(url);
         const json = await response.json();
         console.log(json);
@@ -86,7 +173,7 @@ const SearchBar = (props: {
         if (json.length > 0) {
             setAutofillText(json[0].name.substring(text.length));
             setAutoFillVisible(true);
-        }*/
+        }
     };
 
     useEffect(() => {
@@ -95,7 +182,6 @@ const SearchBar = (props: {
         const delayDebounceFn = setTimeout(() => {
             if (searchText.length >= 3 && !autocompleted) {
                 setAutofill(searchText);
-                console.log(searchText);
             }
             autocompleted = false;
         }, 700);
@@ -131,7 +217,12 @@ const SearchBar = (props: {
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
                             e.preventDefault();
-                            console.log("search");
+                            if (searchText.length < 3) return;
+
+                            props.addItem(searchText);
+                            setSearchText("");
+                            e.currentTarget.textContent = "";
+                            setAutofill("");
                         }
                         if (e.key === "Tab") {
                             e.preventDefault();
@@ -150,19 +241,62 @@ const SearchBar = (props: {
                 ) : (
                     <></>
                 )}
+                <button
+                    className={
+                        searchText.length > 0
+                            ? "searchIcon hidden"
+                            : "searchIcon"
+                    }
+                    disabled
+                >
+                    <img src={search} alt="searchIcon"></img>
+                </button>
             </div>
-            <button
-                className={
-                    searchText.length > 0 ? "searchIcon hidden" : "searchIcon"
-                }
-            >
-                <img src={search} alt="searchIcon"></img>
-            </button>
             <button onClick={closeSearchOverlay} className="closeFilterButton">
                 <img src={filter} className="filterIcon" alt="filterIcon"></img>
                 <img src={close} className="closeIcon" alt="closeIcon"></img>
             </button>
         </form>
+    );
+};
+
+const SearchButton = (props: { search: () => void }) => {
+    return (
+        <button onClick={props.search} className="searchButton">
+            Search
+        </button>
+    );
+};
+
+const SearchTags = (props: {
+    items: string[];
+    removeItem: (index: number) => void;
+}) => {
+    const [expanded, setExpanded] = useState(true);
+
+    return (
+        <>
+            <div className={!expanded ? "searchTags" : "searchTags expanded"}>
+                {props.items.map((item: string, index: number) => (
+                    <p key={index} onClick={() => props.removeItem(index)}>
+                        {item}
+                        <svg height="10" width="10">
+                            <path
+                                d="m 0 0 l 10 10 z m 10 0 l -10 10"
+                                stroke="#71ce97"
+                                strokeWidth="2"
+                            ></path>
+                        </svg>
+                    </p>
+                ))}
+            </div>
+            <div
+                onClick={() => setExpanded(!expanded)}
+                className={
+                    !expanded ? "searchTagsButton" : "searchTagsButton expanded"
+                }
+            ></div>
+        </>
     );
 };
 

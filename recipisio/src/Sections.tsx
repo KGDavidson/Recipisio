@@ -70,7 +70,7 @@ const SectionTile = (props: {
     sourceUrl: string;
 }) => {
     return (
-        <a target="_blank" href={props.sourceUrl}>
+        <a target="_blank" rel="noreferrer" href={props.sourceUrl}>
             <article
                 style={{
                     backgroundImage: `radial-gradient(transparent, rgba(0, 0, 0, 0.192)), url("${props.imageUrl}")`,
@@ -96,8 +96,8 @@ const PopularSection = () => {
     const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
 
     const getPopularRecipes = async () => {
-        setPopularRecipes(POPULAR_RECIPES as Recipe[]);
-        return;
+        //setPopularRecipes(POPULAR_RECIPES as Recipe[]);
+        //return;
 
         const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11`;
         const response = await fetch(url);
@@ -138,8 +138,8 @@ const VegetarianSection = () => {
     const [vegetarianRecipes, setVegetarianRecipes] = useState<Recipe[]>([]);
 
     const getVegetarianRecipes = async () => {
-        setVegetarianRecipes(VEGETARIAN_RECIPES);
-        return;
+        //setVegetarianRecipes(VEGETARIAN_RECIPES);
+        //return;
 
         const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11&tags=vegetarian`;
         const response = await fetch(url);
@@ -164,8 +164,8 @@ const VeganSection = () => {
     const [veganRecipes, setVeganRecipes] = useState<Recipe[]>([]);
 
     const getVeganRecipes = async () => {
-        setVeganRecipes(VEGAN_RECIPES);
-        return;
+        //setVeganRecipes(VEGAN_RECIPES);
+        //return;
 
         const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11&tags=vegan`;
         const response = await fetch(url);
