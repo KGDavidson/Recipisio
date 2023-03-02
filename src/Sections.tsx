@@ -1,10 +1,4 @@
 import { useEffect, useState } from "react";
-import { API_KEY } from "./API_KEY";
-import {
-    POPULAR_RECIPES,
-    VEGAN_RECIPES,
-    VEGETARIAN_RECIPES,
-} from "./DEMO_DATA";
 
 interface Recipe {
     readyInMinutes: number;
@@ -99,7 +93,7 @@ const PopularSection = () => {
         //setPopularRecipes(POPULAR_RECIPES as Recipe[]);
         //return;
 
-        const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11`;
+        const url = `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=11`;
         const response = await fetch(url);
         const json = await response.json();
 
@@ -141,7 +135,7 @@ const VegetarianSection = () => {
         //setVegetarianRecipes(VEGETARIAN_RECIPES);
         //return;
 
-        const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11&tags=vegetarian`;
+        const url = `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=11&tags=vegetarian`;
         const response = await fetch(url);
         const json = await response.json();
         console.log(json.recipes);
@@ -167,7 +161,7 @@ const VeganSection = () => {
         //setVeganRecipes(VEGAN_RECIPES);
         //return;
 
-        const url = `https://api.spoonacular.com/recipes/random?apiKey=${API_KEY}&number=11&tags=vegan`;
+        const url = `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=11&tags=vegan`;
         const response = await fetch(url);
         const json = await response.json();
 

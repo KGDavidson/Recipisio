@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import search from "./imgs/search.png";
 import filter from "./imgs/filter.png";
 import close from "./imgs/close.png";
-import { API_KEY } from "./API_KEY";
-import { SEARCH_RECIPES } from "./DEMO_DATA";
 
 interface SearchRecipe {
     title: string;
@@ -44,7 +42,7 @@ const SearchOverlay = (props: {
         //setSearchRecipes(SEARCH_RECIPES);
 
         //return;
-        const url = `https://api.spoonacular.com/recipes/findByIngredients?apiKey=${API_KEY}&ingredients=${items.join(
+        const url = `https://api.spoonacular.com/recipes/findByIngredients?apiKey=${process.env.REACT_APP_API_KEY}&ingredients=${items.join(
             ","
         )}`;
         const response = await fetch(url);
@@ -165,7 +163,7 @@ const SearchBar = (props: {
         //setAutoFillVisible(true);
         //return;
 
-        const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${API_KEY}&query=${text}&number=1&metaInformation=false`;
+        const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${process.env.REACT_APP_API_KEY}&query=${text}&number=1&metaInformation=false`;
         const response = await fetch(url);
         const json = await response.json();
         console.log(json);
