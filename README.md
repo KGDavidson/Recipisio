@@ -17,7 +17,7 @@ A mobile-responsive search-by-ingredient recipe application powered by the Spoon
 
 ## Live
 
--   Live site at https://recipisio.my.to/
+-   Live site at https://recipisio.netlify.app/
 
 ---
 
