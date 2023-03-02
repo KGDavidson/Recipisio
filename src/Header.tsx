@@ -1,6 +1,5 @@
 import search from "./imgs/search.png";
 import filter from "./imgs/filter.png";
-import { useState } from "react";
 
 const TangerineSlice = {
     randomY: Math.floor(Math.random() * 10 + 10),

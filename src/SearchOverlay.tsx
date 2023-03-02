@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import search from "./imgs/search.png";
 import filter from "./imgs/filter.png";
 import close from "./imgs/close.png";
@@ -92,22 +92,20 @@ const SectionTile = (props: {
     usedIngredients: {}[];
 }) => {
     return (
-        <a target="_blank" rel="noreferrer">
-            <article
-                style={{
-                    backgroundImage: `radial-gradient(transparent, rgba(0, 0, 0, 0.192)), url("${props.imageUrl}")`,
-                }}
-            >
-                <div className="info">
-                    <h6>{props.title}</h6>
-                    <p>
-                        {props.usedIngredients.length}/
-                        {props.usedIngredients.length +
-                            props.unusedIngredients.length}
-                    </p>
-                </div>
-            </article>
-        </a>
+      <article
+          style={{
+              backgroundImage: `radial-gradient(transparent, rgba(0, 0, 0, 0.192)), url("${props.imageUrl}")`,
+          }}
+      >
+          <div className="info">
+              <h6>{props.title}</h6>
+              <p>
+                  {props.usedIngredients.length}/
+                  {props.usedIngredients.length +
+                      props.unusedIngredients.length}
+              </p>
+          </div>
+      </article>
     );
 };
 
@@ -123,8 +121,7 @@ const SearchBar = (props: {
     const [autofillVisible, setAutoFillVisible] = useState(false);
 
     const inputRef = useRef<HTMLDivElement>(null);
-
-    var autocompleted: boolean = false;
+    const autocompletedRef = useRef<boolean>(false);
 
     const setInputFocusAndClear = () => {
         setInputFocus();
@@ -158,50 +155,46 @@ const SearchBar = (props: {
             setInputFocusAndClear();
     });
 
-    const setAutofill = async (text: string) => {
-        //setAutofillText("ple");
-        //setAutoFillVisible(true);
-        //return;
+    const setAutofill = useCallback(async (text: string) => {
+      const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${process.env.REACT_APP_API_KEY}&query=${text}&number=1&metaInformation=false`;
+      const response = await fetch(url);
+      const json = await response.json();
+      console.log(json);
 
-        const url = `https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${process.env.REACT_APP_API_KEY}&query=${text}&number=1&metaInformation=false`;
-        const response = await fetch(url);
-        const json = await response.json();
-        console.log(json);
+      if (json.length > 0) {
+          setAutofillText(json[0].name.substring(text.length));
+          setAutoFillVisible(true);
+      }
+  }, []);
 
-        if (json.length > 0) {
-            setAutofillText(json[0].name.substring(text.length));
-            setAutoFillVisible(true);
-        }
-    };
+    const moveCursorToEnd = useCallback((e: any) => {
+      const el = e.currentTarget || e.current;
+      const range = document.createRange();
+      const sel = window.getSelection();
 
-    useEffect(() => {
-        setAutoFillVisible(false);
-        moveCursorToEnd(inputRef);
-        const delayDebounceFn = setTimeout(() => {
-            if (searchText.length >= 3 && !autocompleted) {
-                setAutofill(searchText);
-            }
-            autocompleted = false;
-        }, 700);
+      try {
+          range.setStart(el.childNodes[0], searchText.length);
+          range.collapse(true);
 
-        return () => clearTimeout(delayDebounceFn);
+          if (sel !== null) {
+              sel.removeAllRanges();
+              sel.addRange(range);
+          }
+      } catch (e) {}
     }, [searchText]);
 
-    const moveCursorToEnd = (e: any) => {
-        const el = e.currentTarget || e.current;
-        const range = document.createRange();
-        const sel = window.getSelection();
+    useEffect(() => {
+      setAutoFillVisible(false);
+      moveCursorToEnd(inputRef);
+      const delayDebounceFn = setTimeout(() => {
+          if (searchText.length >= 3 && !autocompletedRef.current) {
+              setAutofill(searchText);
+          }
+          autocompletedRef.current = false;
+      }, 700);
 
-        try {
-            range.setStart(el.childNodes[0], searchText.length);
-            range.collapse(true);
-
-            if (sel !== null) {
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        } catch (e) {}
-    };
+      return () => clearTimeout(delayDebounceFn);
+    }, [searchText, moveCursorToEnd, setAutofill]);
 
     return (
         <form onClick={setInputFocus} className="searchBar">
