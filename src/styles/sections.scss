@@ -15,7 +15,7 @@ section {
 
         border-radius: 25px;
         background-position: center;
-        background-size: 120% auto;
+        background-size: auto;
         object-fit: cover;
 
         .info {
@@ -94,7 +94,7 @@ section {
             margin: 0;
             width: 50vw;
             height: 75vw;
-            background-size: 240% auto;
+            background-size: auto;
         }
     }
 }

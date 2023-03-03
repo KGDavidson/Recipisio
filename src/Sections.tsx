@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { upscaleImgPath } from "./helper";
 
 interface Recipe {
+    title: string
     readyInMinutes: number;
     image: string;
     sourceUrl: string;
@@ -34,6 +36,7 @@ const SectionTiles = (props: { title: string; recipes: Recipe[] }) => {
             <div className="scroller">
                 {props.recipes.map((recipe: Recipe, index: number) => (
                     <SectionTile
+                        title={recipe.title}
                         key={index}
                         sourceUrl={recipe.sourceUrl}
                         readyIn={recipe.readyInMinutes}
@@ -50,6 +53,7 @@ const SectionSingular = (props: { title: string; recipe: Recipe }) => {
         <section>
             <h3>{props.title}</h3>
             <SectionTile
+                title={props.recipe.title}
                 sourceUrl={props.recipe.sourceUrl}
                 readyIn={props.recipe.readyInMinutes}
                 imageUrl={props.recipe.image}
@@ -59,6 +63,7 @@ const SectionSingular = (props: { title: string; recipe: Recipe }) => {
 };
 
 const SectionTile = (props: {
+    title: string;
     readyIn: number;
     imageUrl: string;
     sourceUrl: string;
@@ -71,6 +76,7 @@ const SectionTile = (props: {
                 }}
             >
                 <div className="info">
+                    {/* <h6>{props.title}</h6> */}
                     <div className="ratings">
                         <div className="bar"></div>
                         <RatingCircle></RatingCircle>
@@ -79,7 +85,10 @@ const SectionTile = (props: {
                         <RatingCircle></RatingCircle>
                         <RatingCircle></RatingCircle>
                     </div>
-                    <p>{props.readyIn} mins</p>
+                    <p style={{
+                      fontWeight: '900',
+                      fontSize: '0.75rem',
+                    }}>{props.readyIn} mins</p>
                 </div>
             </article>
         </a>
@@ -99,7 +108,10 @@ const PopularSection = () => {
 
         console.log(json.recipes);
 
-        setPopularRecipes(json.recipes);
+        setPopularRecipes(json.recipes.map((recipe: Recipe) => ({
+          ...recipe,
+          image: upscaleImgPath(recipe.image),
+        })));
     };
 
     useEffect(() => {
@@ -108,18 +120,13 @@ const PopularSection = () => {
 
     return (
         <>
-            <SectionSingular
-                title="Recipe of the Day"
-                recipe={
-                    popularRecipes.length > 0
-                        ? popularRecipes[0]
-                        : {
-                              readyInMinutes: 0,
-                              image: "",
-                              sourceUrl: "",
-                          }
-                }
-            ></SectionSingular>
+
+            {popularRecipes.length > 0 && (
+              <SectionSingular
+                  title="Recipe of the Day"
+                  recipe={popularRecipes[0]}
+              />
+            )}
             <SectionTiles
                 title="Popular Today"
                 recipes={popularRecipes.slice(1)}
@@ -139,7 +146,11 @@ const VegetarianSection = () => {
         const response = await fetch(url);
         const json = await response.json();
         console.log(json.recipes);
-        setVegetarianRecipes(json.recipes);
+        
+        setVegetarianRecipes(json.recipes.map((recipe: Recipe) => ({
+          ...recipe,
+          image: upscaleImgPath(recipe.image),
+        })));
     };
 
     useEffect(() => {
@@ -165,7 +176,10 @@ const VeganSection = () => {
         const response = await fetch(url);
         const json = await response.json();
 
-        setVeganRecipes(json.recipes);
+        setVeganRecipes(json.recipes.map((recipe: Recipe) => ({
+          ...recipe,
+          image: upscaleImgPath(recipe.image),
+        })));
     };
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import search from "./imgs/search.png";
 import filter from "./imgs/filter.png";
 import close from "./imgs/close.png";
+import { upscaleImgPath } from "./helper";
 
 interface SearchRecipe {
     title: string;
@@ -74,7 +75,7 @@ const SearchOverlay = (props: {
                 {searchRecipes.map((recipe: SearchRecipe, index: number) => (
                     <SectionTile
                         key={index}
-                        imageUrl={recipe.image}
+                        imageUrl={upscaleImgPath(recipe.image)}
                         title={recipe.title}
                         usedIngredients={recipe.usedIngredients}
                         unusedIngredients={recipe.unusedIngredients}
