@@ -23,13 +23,13 @@ A mobile-responsive search-by-ingredient recipe application powered by the Spoon
 
 ## Setup
 
-Clone this repo to your desktop and run `npm install` in the `folio` directory to install all the dependencies.
+Clone this repo to your desktop and run `npm install` in the root directory to install all the dependencies.
 
 ---
 
 ## Usage
 
-Once the dependencies are installed, you can run `npm start` in the `folio` directory to start the application.
+Once the dependencies are installed, you can run `npm start` in the root directory to start the application.
 
 You will then be able to access it at localhost:8000
 
